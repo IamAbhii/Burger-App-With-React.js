@@ -6,7 +6,10 @@
 
 ## __Technologies used in this project__
 -__Front End__:ReactJs,React-Router,Redux,React-hooks,Javascript,CSS,HTML
+
 -__back End__:FireBase,Axion Library for API calls
+
+
 ### Home Page
 
 
