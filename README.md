@@ -18,7 +18,7 @@
 - Order Now
 - CheckOut (Currently in progress with backend API)
 
-        #### Functionality on Home Page
+  #### Functionality on Home Page
 
   ![Button Styling](./src/assets/README-Images/ButtonStyling.png)
 
