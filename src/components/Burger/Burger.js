@@ -1,6 +1,7 @@
 import React from 'react';
 import classes from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
+
 const burger = (props) => {
   //transfoming the props.ingredient object to an array as per required quintity.
   let transformedIngredients = Object.keys(props.ingredients)
