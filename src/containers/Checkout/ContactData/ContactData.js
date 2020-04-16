@@ -5,6 +5,8 @@ import classes from './ContactData.module.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import * as actions from '../../../store/actions/index';
 
 class ContatctData extends React.Component {
   state = {
@@ -13,91 +15,89 @@ class ContatctData extends React.Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your Name'
+          placeholder: 'Your Name',
         },
         value: '',
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        valueMessage: 'Please eneter valid name'
+        valueMessage: 'Please eneter valid name',
       },
       street: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your street'
+          placeholder: 'Your street',
         },
         value: '',
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        valueMessage: 'Please eneter valid Street'
+        valueMessage: 'Please eneter valid Street',
       },
       postalCode: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your zipcode'
+          placeholder: 'Your zipcode',
         },
         value: '',
         validation: {
           required: true,
           minLength: 5,
-          maxLength: 5
+          maxLength: 5,
         },
         valid: false,
         touched: false,
         valueMessage:
-          ' Please eneter valid Postal Code with all numbers and should be 5 degits only'
+          ' Please eneter valid Postal Code with all numbers and should be 5 degits only',
       },
       country: {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your country'
+          placeholder: 'Your country',
         },
         value: '',
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        valueMessage: 'Please eneter valid country'
+        valueMessage: 'Please eneter valid country',
       },
       email: {
         elementType: 'input',
         elementConfig: {
           type: 'email',
-          placeholder: 'Your email'
+          placeholder: 'Your email',
         },
         value: '',
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        valueMessage: 'Please eneter valid email address'
+        valueMessage: 'Please eneter valid email address',
       },
       deliveryMethod: {
         elementType: 'select',
         elementConfig: {
           option: [
             { value: 'fastest', displayValue: 'Fastest' },
-            { value: 'cheapest', displayValue: 'Cheapest' }
-          ]
+            { value: 'cheapest', displayValue: 'Cheapest' },
+          ],
         },
         validation: {},
         value: 'fastest',
-        valid: true
-      }
+        valid: true,
+      },
     },
-
-    loading: false,
-    formValid: false
+    formValid: false,
   };
 
   checkValidity(value, rules) {
@@ -120,7 +120,6 @@ class ContatctData extends React.Component {
 
   orderHandler = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
     const formData = {};
 
     for (let formElementIdentifier in this.state.orderForm) {
@@ -132,29 +131,22 @@ class ContatctData extends React.Component {
     const order = {
       ingredients: this.props.ings,
       price: this.props.price,
-      orderData: formData
+      orderData: formData,
     };
-    axios
-      .post('/orders.json', order)
-      .then((res) => {
-        this.setState({ loading: false });
-        this.props.history.push('/');
-      })
-      .catch((error) => {
-        this.setState({ loading: false });
-      });
+
+    this.props.onOrderBurger(order);
   };
 
   inputChangedHandler = (event, inputIdentifier) => {
     // we need to go to value in this object which is nested in orderform and so
     //we need to create deeply clone of that object
     const updatedOrderForm = {
-      ...this.state.orderForm
+      ...this.state.orderForm,
     };
 
     // now to go to value property
     const updatedFormElement = {
-      ...updatedOrderForm[inputIdentifier]
+      ...updatedOrderForm[inputIdentifier],
     };
 
     updatedFormElement.value = event.target.value;
@@ -177,7 +169,7 @@ class ContatctData extends React.Component {
     for (let key in this.state.orderForm) {
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key]
+        config: this.state.orderForm[key],
       });
     }
 
@@ -202,7 +194,7 @@ class ContatctData extends React.Component {
       </form>
     );
 
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
 
@@ -217,9 +209,19 @@ class ContatctData extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    loading: state.order.loading,
   };
 };
 
-export default connect(mapStateToProps)(ContatctData);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(ContatctData, axios));
