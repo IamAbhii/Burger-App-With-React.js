@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
-import { updateObject } from '../utility';
+import { updateObject } from '../../shared/utility';
 const initialState = {
   orders: [],
   loading: false,
@@ -21,6 +21,7 @@ const reducer = (state = initialState, action) => {
         orders: state.orders.concat(newOrder),
         purchased: true,
       });
+
     case actionTypes.PURCHASE_BURGER_FAIL:
       return updateObject(state, { loading: false });
 
